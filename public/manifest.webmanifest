@@ -1,0 +1,20 @@
+{
+  "name": "Travesía / The Crossing",
+  "short_name": "Travesía",
+  "description": "Learn Spanish by living an immigrant's journey. A choose-your-own-adventure for allies.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "en",
+  "background_color": "#0c0a09",
+  "theme_color": "#0c0a09",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

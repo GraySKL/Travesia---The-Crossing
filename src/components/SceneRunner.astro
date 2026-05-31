@@ -1,0 +1,167 @@
+---
+import type { Chapter } from '../game/types';
+
+interface Props {
+  chapter: Chapter;
+}
+
+const { chapter } = Astro.props;
+const chapterJson = JSON.stringify(chapter);
+---
+<div id="game-root" class="game" data-chapter={chapterJson}></div>
+
+<script>
+  import { initGame } from '../game/engine';
+  import type { Chapter } from '../game/types';
+
+  const root = document.getElementById('game-root');
+  if (root && root.dataset.chapter) {
+    const chapter = JSON.parse(root.dataset.chapter) as Chapter;
+    initGame(root, chapter);
+  }
+</script>
+
+<style is:global>
+  .game {
+    display: block;
+  }
+  .scene {
+    font-size: 1.075rem;
+    line-height: 1.75;
+  }
+
+  .speech-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+  .speech-toggle,
+  .speech-read {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-card);
+    color: var(--color-muted);
+    cursor: pointer;
+  }
+  .speech-toggle:hover,
+  .speech-read:hover,
+  .speech-toggle:focus-visible,
+  .speech-read:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-accent-soft);
+  }
+  .speech-note {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+  .scene .line {
+    margin: 0 0 1rem;
+  }
+  .scene .speaker {
+    color: var(--color-accent-soft);
+    font-weight: 600;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 1.75rem;
+  }
+  .choice-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1rem;
+    border-radius: 0.6rem;
+    font: inherit;
+    cursor: pointer;
+    border: 1px solid var(--color-border);
+    background: var(--color-card);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .btn:hover,
+  .btn:focus-visible {
+    border-color: var(--color-accent);
+  }
+  .btn-primary {
+    background: var(--color-accent);
+    color: #000;
+    font-weight: 600;
+    border-color: transparent;
+  }
+  .btn-choice {
+    flex: 1;
+    justify-content: flex-start;
+    text-align: left;
+  }
+  .btn-ghost {
+    background: transparent;
+  }
+  .choice-gloss {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+  .hint {
+    flex: none;
+    width: 2.6rem;
+    border-radius: 0.6rem;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+    font: inherit;
+  }
+  .hint:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent-soft);
+  }
+
+  .end-note {
+    margin-top: 1.75rem;
+    padding-left: 0.85rem;
+    border-left: 3px solid var(--color-accent);
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .vocab-tray {
+    margin-top: 2.25rem;
+  }
+  .tray-details {
+    border: 1px solid var(--color-border);
+    border-radius: 0.6rem;
+    padding: 0.5rem 0.85rem;
+    background: var(--color-card);
+  }
+  .tray-details summary {
+    cursor: pointer;
+    color: var(--color-accent-soft);
+  }
+  .tray-details ul {
+    margin: 0.6rem 0 0;
+    padding-left: 1.1rem;
+  }
+  .tray-details li {
+    margin: 0.25rem 0;
+  }
+
+  /* Subtle atmospheric tint per scene mood. */
+  .scene[data-mood='dawn'] { box-shadow: inset 0 90px 120px -120px #f59e0b55; }
+  .scene[data-mood='warm'] { box-shadow: inset 0 90px 120px -120px #f9731633; }
+  .scene[data-mood='hope'] { box-shadow: inset 0 90px 120px -120px #22c55e33; }
+  .scene[data-mood='tense'] { box-shadow: inset 0 90px 120px -120px #ef444433; }
+  .scene[data-mood='cold'] { box-shadow: inset 0 90px 120px -120px #38bdf833; }
+  .scene[data-mood='night'] { box-shadow: inset 0 90px 120px -120px #6366f133; }
+</style>

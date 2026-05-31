@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { chapters } from '../content/story';
+
+const first = chapters[0];
+---
+<BaseLayout>
+  <section class="py-8">
+    <p class="text-[var(--color-accent)] text-sm uppercase tracking-widest mb-2">
+      Travesía
+    </p>
+    <h1 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">
+      The Crossing
+    </h1>
+    <p class="text-lg text-[var(--color-muted)] max-w-prose mb-6">
+      Learn Spanish the way it's really learned — by living in it. Step into an
+      immigrant's journey through the U.S., make choices, and feel what people
+      doing everything right still face today.
+    </p>
+
+    <div class="flex flex-wrap gap-3">
+      <a
+        id="start-btn"
+        href={`/play/${first.id}`}
+        class="px-5 py-3 rounded-lg bg-[var(--color-accent)] text-black font-semibold hover:brightness-110"
+      >
+        Begin
+      </a>
+      <a
+        id="resume-btn"
+        href={`/play/${first.id}`}
+        class="hidden px-5 py-3 rounded-lg border border-[var(--color-border)] hover:bg-[var(--color-card)]"
+      >
+        Resume
+      </a>
+    </div>
+
+    <p
+      class="mt-8 text-sm text-[var(--color-muted)] border-l-2 border-[var(--color-border)] pl-3 max-w-prose"
+    >
+      A heads-up: this story portrays real situations, including immigration
+      detention and removal. It is grounded in documented accounts and handled
+      with care.
+    </p>
+  </section>
+
+  <script>
+    import { loadSave, clearSave } from '../game/state';
+
+    const save = loadSave();
+    const startBtn = document.getElementById('start-btn');
+    const resumeBtn = document.getElementById('resume-btn');
+
+    if (save && startBtn && resumeBtn) {
+      resumeBtn.setAttribute('href', `/play/${save.chapterId}`);
+      resumeBtn.classList.remove('hidden');
+      startBtn.textContent = 'Start over';
+      startBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearSave();
+        const href = startBtn.getAttribute('href');
+        if (href) window.location.href = href;
+      });
+    }
+  </script>
+</BaseLayout>

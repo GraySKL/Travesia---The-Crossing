@@ -1,0 +1,67 @@
+---
+import '../styles/globals.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const siteName = 'Travesía / The Crossing';
+const pageTitle = title ? `${title} — ${siteName}` : siteName;
+const pageDesc =
+  description ??
+  "Learn Spanish by living an immigrant's journey. A choose-your-own-adventure for allies.";
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={pageDesc} />
+    <meta name="theme-color" content="#0c0a09" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <link rel="apple-touch-icon" href="/icons/icon.svg" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-amber-500 focus:text-black focus:p-2 focus:rounded"
+    >
+      Skip to main content
+    </a>
+
+    <header class="border-b border-[var(--color-border)]">
+      <nav class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <a href="/" class="font-semibold tracking-tight">{siteName}</a>
+        <a href="/" class="text-sm text-[var(--color-muted)] hover:underline">Home</a>
+      </nav>
+    </header>
+
+    <main id="main" class="max-w-2xl mx-auto px-4 py-6">
+      <slot />
+    </main>
+
+    <footer
+      class="max-w-2xl mx-auto px-4 py-8 mt-12 border-t border-[var(--color-border)] text-sm text-[var(--color-muted)]"
+    >
+      <p class="mb-1">
+        Travesía is a work of fiction for education and empathy. It is not legal
+        advice. For your situation, contact a lawyer.
+      </p>
+      <p class="mb-3" lang="es">
+        Travesía es una obra de ficción para educación y empatía. No es asesoría
+        legal. Para su situación, consulte a un abogado.
+      </p>
+      <p class="text-xs">
+        Open source. Rights content sourced from
+        <a class="underline" href="https://www.ilrc.org/redcards">ILRC</a>,
+        <a class="underline" href="https://www.aclu.org/know-your-rights/immigrants-rights">ACLU</a>,
+        and others — see each chapter's sources.
+      </p>
+    </footer>
+  </body>
+</html>

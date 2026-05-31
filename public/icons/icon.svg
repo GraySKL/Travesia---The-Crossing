@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Travesía">
+  <rect width="512" height="512" rx="96" fill="#0c0a09"/>
+  <path d="M48 332 Q256 150 464 332" fill="none" stroke="#f59e0b" stroke-width="26" stroke-linecap="round"/>
+  <line x1="48" y1="332" x2="48" y2="404" stroke="#f59e0b" stroke-width="26" stroke-linecap="round"/>
+  <line x1="464" y1="332" x2="464" y2="404" stroke="#f59e0b" stroke-width="26" stroke-linecap="round"/>
+  <line x1="160" y1="252" x2="160" y2="404" stroke="#fbbf24" stroke-width="14" stroke-linecap="round"/>
+  <line x1="256" y1="220" x2="256" y2="404" stroke="#fbbf24" stroke-width="14" stroke-linecap="round"/>
+  <line x1="352" y1="252" x2="352" y2="404" stroke="#fbbf24" stroke-width="14" stroke-linecap="round"/>
+  <line x1="40" y1="404" x2="472" y2="404" stroke="#44403c" stroke-width="14" stroke-linecap="round"/>
+</svg>
