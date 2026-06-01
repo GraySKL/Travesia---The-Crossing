@@ -7,6 +7,7 @@
 // remote service. Nothing here ever leaves the device.
 
 const SETTING_KEY = 'travesia.speech.v1';
+const RATE_KEY = 'travesia.speechrate.v1';
 
 const LANG_FULL: Record<'es' | 'en', string> = { es: 'es-ES', en: 'en-US' };
 
@@ -74,11 +75,32 @@ export function setEnabled(on: boolean): void {
   if (!on) stopSpeaking();
 }
 
+/** Replay-speed multiplier for word taps / choice pronunciation / rehearsal
+ *  (1 = normal, lower = slower). Does NOT affect full-scene narration. */
+export function getRate(): number {
+  if (typeof window === 'undefined') return 1;
+  try {
+    const v = parseFloat(window.localStorage.getItem(RATE_KEY) ?? '');
+    return Number.isFinite(v) && v > 0 ? v : 1;
+  } catch {
+    return 1;
+  }
+}
+
+export function setRate(multiplier: number): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(RATE_KEY, String(multiplier));
+  } catch {
+    // ignore
+  }
+}
+
 export function stopSpeaking(): void {
   if (speechSupported()) window.speechSynthesis.cancel();
 }
 
-export function speakNow(text: string, lang: 'es' | 'en'): void {
+export function speakNow(text: string, lang: 'es' | 'en', rate?: number): void {
   if (!speechSupported() || !isEnabled()) return;
   const voice = pickVoice(LANG_FULL[lang]);
   if (!voice) return; // no on-device voice — degrade, never use a cloud voice
@@ -86,7 +108,10 @@ export function speakNow(text: string, lang: 'es' | 'en'): void {
   const u = new SpeechSynthesisUtterance(text);
   u.voice = voice;
   u.lang = voice.lang;
-  u.rate = 0.95;
+  // Spanish a touch slower than English for learners; the practice multiplier
+  // (the on-screen "Replay speed" control) slows it further on demand.
+  const base = lang === 'es' ? 0.9 : 0.95;
+  u.rate = base * (rate ?? getRate());
   window.speechSynthesis.speak(u);
 }
 

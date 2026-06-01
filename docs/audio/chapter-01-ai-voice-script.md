@@ -26,21 +26,47 @@ Surface in the footer / an "About the voices" note. Bilingual:
 
 ---
 
-## Tool
+## Voice engine: Kokoro-82M (chosen — local, free, Apache-2.0)
 
-**Primary recommendation: ElevenLabs** — best multilingual + emotional delivery, supports
-Latin-American Spanish, and has a sound-effects generator for ambiance. Its v3 model accepts
-inline **audio tags** like `[warmly]`, `[out of breath]`, `[quietly]` — I've added optional
-tags below.
+Voices are generated with **Kokoro-82M** (https://huggingface.co/hexgrad/Kokoro-82M).
+Why: it's **Apache-2.0**, so the audio is **freely redistributable** in this MIT/public repo,
+and it runs **fully offline** on your machine — no API, no credits, no telemetry (matches the
+threat model). MP3 out via `lameenc` (no ffmpeg).
 
-Alternatives: PlayHT, OpenAI TTS, Azure Neural voices (all fine for authoring).
+**One-time setup** (Windows; needs internet once for Python 3.12, packages, and the model):
+```bash
+# uv manages an isolated Python 3.12 — PyTorch has no Python 3.14 wheels yet
+python -m pip install uv
+uv python install 3.12
+uv venv .venv-audio --python 3.12          # .venv-audio is git-ignored
+uv pip install --python .venv-audio kokoro soundfile lameenc espeakng-loader phonemizer-fork
+uv pip install --python .venv-audio "en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl"
+```
 
-**Before you ship audio, check two things:**
-1. **License:** your plan must permit **commercial use AND redistribution** of the generated
-   audio in a public/MIT, open-source app (ElevenLabs paid tiers grant this; free tiers
-   usually don't and may require attribution).
-2. **No real-person clones:** use the tool's stock/synthetic voices, not clones of
-   identifiable real people, without consent.
+**Generate:**
+```bash
+npm run audio -- --only arrival --force     # Chapter 1 voices
+npm run audio -- --only work                # Chapter 2 — AFTER the dignity sign-off
+npm run audio -- --voice MARIA --force      # just one role
+```
+The Node wrapper (`scripts/audio-kokoro.mjs`) feeds the manifest to the Python generator
+(`scripts/generate-audio-kokoro.py`); the **role → Kokoro voice map** is at the top of that
+Python file (NARRATOR=`af_heart`, MARIA/ROSA/LUCIA=`ef_dora`, BETO=`em_alex`, AGENT=`am_michael`).
+
+**Caveats:** Kokoro's Spanish is **European/Castilian** (e.g. "gra-_th_-ias"), and there's only
+one Spanish female voice (`ef_dora`), so María/Rosa/Lucía share it (nudged apart by speed).
+Kokoro is **TTS-only** — ambient beds come from elsewhere (see Ambiance below).
+
+## Ambient beds (where the background SFX came from)
+
+Kokoro is voices-only. The 8 looping ambient beds in `public/audio/ambient/` are static
+assets (prompts recorded in the `beds` map of `scripts/audio-manifest.mjs`). They were first
+generated with ElevenLabs' SFX tool; for a **fully** clean-license repo, re-source them as
+**CC0** field recordings (e.g. freesound.org, CC0-filtered) matching those descriptions.
+
+**Ethics (any engine):** use stock/synthetic voices only — never clones of identifiable real
+people without consent. Kokoro (Apache-2.0) already satisfies commercial-use + redistribution
+for this MIT/public repo.
 
 ---
 
@@ -161,7 +187,7 @@ The playback layer now exists. To light it up:
 
 1. **Drop the files in:** `public/audio/arrival/*.mp3` (voice lines) and
    `public/audio/ambient/*.mp3` (beds).
-2. **Wire the ids into the story data** (`src/content/story/chapter-01-arrival.ts`):
+2. **Wire the ids into the story data** (`src/story/chapter-01-arrival.ts`):
    - Each line gets `audio: ['<file-id>', ...]` (two ids for a line spoken by a
      character then the narrator — e.g. `audio: ['carRide-3', 'carRide-3b']`).
    - Each scene gets `ambient: '<bed>'` (e.g. `ambient: 'depot'`).
@@ -171,5 +197,25 @@ The playback layer now exists. To light it up:
 Behavior once wired: scenes **with** clips auto-play on entry over the ambient bed (the
 immersive "you are there" experience); any missing clip **falls back to on-device TTS**;
 tapping a Spanish word speaks it (TTS); a choice's `?` plays its clip or TTS. Audio on/off
-toggle and offline/no-network are unchanged. (I can do the wiring for you once the files
-exist — it's a small mechanical edit.)
+toggle and offline/no-network are unchanged.
+
+**Status: the ids are now wired** into both `src/story/chapter-01-arrival.ts` and
+`src/story/chapter-02-work.ts`. You only need to generate the files.
+
+---
+
+## Chapter 2 — "The Job": cast + ambiance (per-line texts/ids live in the manifest)
+
+New voices beyond Chapter 1:
+
+| Voice | Who | Language | Profile |
+|---|---|---|---|
+| **LUCIA** | Coworker who hands over the red card | Spanish (Latin-Am) | Warm but careful, working-class; teaches the rights lines quietly. |
+| **AGENT** | The ICE officer at the raid | English (US) | Flat, procedural authority — **not** a cartoon villain. Restraint. |
+
+New ambient beds: `plant` (cold processing-line hum), `raid` (uneasy fluorescent tension),
+`detention` (bleak institutional room), `tarmac` (pre-dawn airfield). The opening `morning`
+scene reuses the `home` bed.
+
+> Tone note for the hard scenes: keep delivery **restrained** — the removal beats land harder
+> the quieter they are read. Generate a couple of takes and keep the least theatrical.

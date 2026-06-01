@@ -78,4 +78,6 @@ export interface Chapter {
   /** Citations for every factual claim in this chapter. Vetted by story-vet. */
   sources: string[];
   scenes: Record<SceneId, Scene>;
+  /** Id of the chapter that follows this one; offered as "continue" at endings. */
+  nextChapter?: string;
 }

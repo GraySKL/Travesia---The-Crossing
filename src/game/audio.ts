@@ -32,9 +32,10 @@ function ambient(): HTMLAudioElement | null {
 
 export type ClipResult = 'ok' | 'error';
 
-/** Play a single voice clip. Resolves 'ok' when it finishes, 'error' if it
+/** Play a single voice clip at an optional playback rate (1 = normal, lower =
+ *  slower; pitch preserved). Resolves 'ok' when it finishes, 'error' if it
  *  can't load/play (e.g., the file doesn't exist yet). */
-export function playClip(url: string): Promise<ClipResult> {
+export function playClip(url: string, rate = 1): Promise<ClipResult> {
   return new Promise((resolve) => {
     const el = vo();
     if (!el) {
@@ -54,6 +55,8 @@ export function playClip(url: string): Promise<ClipResult> {
       resolve('error');
     };
     el.src = url;
+    el.playbackRate = rate;
+    el.preservesPitch = true; // keep pitch natural when slowed
     const p = el.play();
     if (p && typeof p.catch === 'function') {
       p.catch(() => {

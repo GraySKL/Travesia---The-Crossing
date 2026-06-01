@@ -28,7 +28,7 @@ The **narrative** (characters, plot, dialogue) is invented — expected for a st
 - Rights / encounter claims → ILRC (https://www.ilrc.org/redcards), NILC, ACLU, United We Dream.
 - Process / event claims (homeownership, employment, detention, removal to a third country) → American Immigration Council, USCIS/ICE/DHS official pages, Migration Policy Institute, or reputable journalism (AP/Reuters/ProPublica) for documented real-case grounding.
 
-Invoke the **`story-vet`** subagent (`.claude/agents/story-vet.md`) on any change under `src/content/story/**`. Every experience surfaces the bilingual disclaimer (in the layout footer):
+Invoke the **`story-vet`** subagent (`.claude/agents/story-vet.md`) on any change under `src/story/**`. Every experience surfaces the bilingual disclaimer (in the layout footer):
 "Travesía is a work of fiction for education and empathy. It is not legal advice. For your situation, contact a lawyer." / "Travesía es una obra de ficción para educación y empatía. No es asesoría legal. Para su situación, consulte a un abogado."
 
 ## Threat model (carried from Puente)
@@ -38,12 +38,12 @@ No accounts, no email, no analytics, no telemetry. No third-party CDNs/fonts. No
 ## Stack
 
 - Astro (TypeScript), Tailwind v4, `@vite-pwa/astro` (offline SW + manifest). No backend.
-- Story is **typed TS data** under `src/content/story/`; a small **vanilla-TS runtime** (`src/game/`) renders scenes in an Astro island — no UI-framework dependency.
+- Story is **typed TS data** under `src/story/`; a small **vanilla-TS runtime** (`src/game/`) renders scenes in an Astro island — no UI-framework dependency.
 - Build: `npm run dev` / `build` / `preview` / `check`. Hosting: Cloudflare Pages or Netlify, static.
 
 ## Token-saving conventions
 
 - Subagents default to Sonnet (`CLAUDE_CODE_SUBAGENT_MODEL=sonnet`); route multi-query research to the `Explore` subagent.
-- Don't bulk-read story content into the main context — grep into `src/content/story/**`.
+- Don't bulk-read story content into the main context — grep into `src/story/**`.
 - `.claudeignore` excludes `node_modules`, build output, and lock files.
 - Prefer editing existing files over creating new ones.

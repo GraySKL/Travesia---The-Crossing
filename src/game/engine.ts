@@ -15,6 +15,8 @@ import {
   stopSpeaking,
   isEnabled,
   setEnabled,
+  getRate,
+  setRate,
   type SpeakPart
 } from './speech';
 import { playClip, stopClip, setAmbient, stopAmbient } from './audio';
@@ -115,6 +117,10 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
     narrationToken++;
     const token = narrationToken;
 
+    // (Re)start this scene's ambient bed, in case a previous narration's tail
+    // timer already stopped it (e.g. on replay).
+    if (scene.ambient) setAmbient(ambientUrl(scene.ambient));
+
     const playClips = async (ids: string[]): Promise<boolean> => {
       for (const id of ids) {
         if (token !== narrationToken) return false;
@@ -143,6 +149,13 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
         await ttsParts([{ text: scene.endNote, lang: 'en' }]);
       }
     }
+
+    // Let the ambient bed linger ~5s after the read-aloud finishes, then stop it
+    // (so it doesn't loop forever). Skipped if narration was superseded meanwhile.
+    if (token !== narrationToken) return;
+    window.setTimeout(() => {
+      if (token === narrationToken) stopAmbient();
+    }, 5000);
   }
 
   function renderLine(line: Line): HTMLParagraphElement {
@@ -209,6 +222,8 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
     });
     bar.appendChild(toggle);
 
+    if (enabled) bar.appendChild(makeSpeedButton());
+
     if (enabled && (sceneHasAudio(scene) || hasVoiceFor('es') || hasVoiceFor('en'))) {
       const readBtn = document.createElement('button');
       readBtn.type = 'button';
@@ -240,6 +255,193 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
     sceneEl.appendChild(bar);
   }
 
+  // ── Replay speed (word taps / choice ? / rehearsal); narration is unaffected ──
+  const REPLAY_SPEEDS = [1, 0.75, 0.5];
+  function speedLabel(r: number): string {
+    return `🐢 Replay speed: ${r === 1 ? 'normal' : `${r}×`}`;
+  }
+  function makeSpeedButton(): HTMLButtonElement {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'speech-toggle';
+    b.title = 'Speed for replaying a word or phrase';
+    b.textContent = speedLabel(getRate());
+    b.addEventListener('click', () => {
+      const cur = getRate();
+      const idx = REPLAY_SPEEDS.indexOf(cur);
+      const next = REPLAY_SPEEDS[(idx + 1) % REPLAY_SPEEDS.length] ?? 1;
+      setRate(next);
+      b.textContent = speedLabel(next);
+    });
+    return b;
+  }
+
+  // Full vocabulary list shown at a chapter ending, with a launcher into rehearsal.
+  function renderEndingVocab(): void {
+    if (!state.vocab.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'vocab-summary';
+    const h = document.createElement('h2');
+    h.className = 'vocab-summary-title';
+    h.textContent = `Words you learned (${state.vocab.length})`;
+    wrap.appendChild(h);
+    const ul = document.createElement('ul');
+    ul.className = 'vocab-list';
+    for (const v of state.vocab) {
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'vocab-replay';
+      b.textContent = v.es;
+      b.setAttribute('aria-label', `Hear: ${v.es}`);
+      b.addEventListener('click', () => speakNow(v.es, 'es'));
+      li.appendChild(b);
+      li.appendChild(
+        document.createTextNode(` — ${v.en}${v.note ? ` (${v.note})` : ''}`)
+      );
+      ul.appendChild(li);
+    }
+    wrap.appendChild(ul);
+    const rehearse = document.createElement('button');
+    rehearse.type = 'button';
+    rehearse.className = 'btn btn-primary';
+    rehearse.textContent = 'Rehearse these words →';
+    rehearse.addEventListener('click', () => renderRehearsal());
+    wrap.appendChild(rehearse);
+    sceneEl.appendChild(wrap);
+  }
+
+  // A low-stress flashcard pass over the words learned so far. No score, no fail.
+  function renderRehearsal(): void {
+    if (!state.vocab.length) {
+      render();
+      return;
+    }
+    cancelNarration();
+    stopAmbient();
+    trayEl.innerHTML = '';
+
+    const cards = state.vocab.slice();
+    const order = cards.map((_, i) => i);
+    let pos = 0;
+    let revealed = false;
+
+    const speakCurrent = (): void => {
+      const v = cards[order[pos]];
+      if (v) speakNow(v.es, 'es');
+    };
+
+    function draw(): void {
+      sceneEl.innerHTML = '';
+      sceneEl.dataset.mood = '';
+      const wrap = document.createElement('div');
+      wrap.className = 'rehearse';
+
+      const top = document.createElement('div');
+      top.className = 'rehearse-top';
+      const back = document.createElement('button');
+      back.type = 'button';
+      back.className = 'btn btn-ghost';
+      back.textContent = '← Back';
+      back.addEventListener('click', () => {
+        stopSpeaking();
+        render();
+      });
+      const meta = document.createElement('span');
+      meta.className = 'rehearse-meta';
+      meta.textContent = `Card ${pos + 1} of ${order.length}`;
+      top.append(back, meta);
+      wrap.appendChild(top);
+
+      if (speechSupported() && isEnabled()) wrap.appendChild(makeSpeedButton());
+
+      const v = cards[order[pos]];
+      const card = document.createElement('div');
+      card.className = 'rehearse-card';
+
+      const es = document.createElement('button');
+      es.type = 'button';
+      es.className = 'rehearse-es';
+      es.textContent = v.es;
+      es.setAttribute('aria-label', `Hear: ${v.es}`);
+      es.addEventListener('click', speakCurrent);
+      card.appendChild(es);
+
+      if (revealed) {
+        const en = document.createElement('p');
+        en.className = 'rehearse-en';
+        en.textContent = `${v.en}${v.note ? ` · ${v.note}` : ''}`;
+        card.appendChild(en);
+      } else {
+        const reveal = document.createElement('button');
+        reveal.type = 'button';
+        reveal.className = 'btn';
+        reveal.textContent = 'Show meaning';
+        reveal.addEventListener('click', () => {
+          revealed = true;
+          draw();
+        });
+        card.appendChild(reveal);
+      }
+      wrap.appendChild(card);
+
+      const nav = document.createElement('div');
+      nav.className = 'rehearse-nav';
+
+      const prev = document.createElement('button');
+      prev.type = 'button';
+      prev.className = 'btn btn-ghost';
+      prev.textContent = '‹ Prev';
+      prev.disabled = pos === 0;
+      prev.addEventListener('click', () => {
+        if (pos === 0) return;
+        pos--;
+        revealed = false;
+        draw();
+        speakCurrent();
+      });
+
+      const last = pos === order.length - 1;
+      const next = document.createElement('button');
+      next.type = 'button';
+      next.className = 'btn btn-primary';
+      next.textContent = last ? 'Done' : 'Next ›';
+      next.addEventListener('click', () => {
+        if (last) {
+          stopSpeaking();
+          render();
+          return;
+        }
+        pos++;
+        revealed = false;
+        draw();
+        speakCurrent();
+      });
+
+      const shuffle = document.createElement('button');
+      shuffle.type = 'button';
+      shuffle.className = 'btn btn-ghost';
+      shuffle.textContent = '🔀 Shuffle';
+      shuffle.addEventListener('click', () => {
+        for (let i = order.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [order[i], order[j]] = [order[j], order[i]];
+        }
+        pos = 0;
+        revealed = false;
+        draw();
+        speakCurrent();
+      });
+
+      nav.append(prev, next, shuffle);
+      wrap.appendChild(nav);
+      sceneEl.appendChild(wrap);
+    }
+
+    draw();
+    speakCurrent();
+  }
+
   function render(): void {
     const scene = chapter.scenes[currentId];
     if (!scene) {
@@ -269,6 +471,7 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
         note.textContent = scene.endNote;
         sceneEl.appendChild(note);
       }
+      renderEndingVocab();
       const again = document.createElement('button');
       again.type = 'button';
       again.className = 'btn btn-ghost';
@@ -289,6 +492,18 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
         cancelNarration();
         stopAmbient();
       });
+      // If another chapter follows, offer it as the primary next step.
+      if (chapter.nextChapter) {
+        const cont = document.createElement('a');
+        cont.href = `/play/${chapter.nextChapter}`;
+        cont.className = 'btn btn-primary';
+        cont.textContent = 'Continue to the next chapter →';
+        cont.addEventListener('click', () => {
+          cancelNarration();
+          stopAmbient();
+        });
+        actions.appendChild(cont);
+      }
       actions.append(again, home);
     } else if (scene.choices && scene.choices.length) {
       for (const choice of scene.choices) {
@@ -314,7 +529,7 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
           hint.addEventListener('click', () => {
             // Pronounce: recorded clip if present, else text-to-speech.
             if (audio) {
-              playClip(clipUrl(audio)).then((r) => {
+              playClip(clipUrl(audio), getRate()).then((r) => {
                 if (r === 'error') speakNow(choice.es, 'es');
               });
             } else {
@@ -343,7 +558,8 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
     }
 
     sceneEl.appendChild(actions);
-    renderTray();
+    if (scene.end) trayEl.innerHTML = '';
+    else renderTray();
     persist();
 
     // Auto-narrate only when this scene has recorded clips — the immersive
@@ -376,8 +592,13 @@ export function initGame(root: HTMLElement, chapter: Chapter): void {
     const ul = document.createElement('ul');
     for (const v of state.vocab) {
       const li = document.createElement('li');
-      const es = document.createElement('strong');
+      const es = document.createElement('button');
+      es.type = 'button';
+      es.className = 'vocab-replay';
       es.textContent = v.es;
+      es.title = `Hear: ${v.es}`;
+      es.setAttribute('aria-label', `Hear: ${v.es}`);
+      es.addEventListener('click', () => speakNow(v.es, 'es'));
       li.appendChild(es);
       li.appendChild(
         document.createTextNode(` — ${v.en}${v.note ? ` (${v.note})` : ''}`)

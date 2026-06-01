@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SceneRunner from '../../components/SceneRunner.astro';
-import { chapters } from '../../content/story';
+import { chapters } from '../../story';
 
 export function getStaticPaths() {
   return chapters.map((chapter) => ({

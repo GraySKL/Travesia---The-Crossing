@@ -24,6 +24,9 @@ node_modules/
 # claude local-only settings (per-developer)
 .claude/settings.local.json
 
+# python audio toolchain (local authoring only, do not commit)
+.venv-audio/
+
 # OS
 Thumbs.db
 
