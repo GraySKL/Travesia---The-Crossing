@@ -9,7 +9,7 @@ tap-to-reveal gloss; **consequence over score**. Sibling to **Puente / Bridge** 
 Know-Your-Rights app, in `../Puente la Divide`). Full charter, tone rules, sourcing rules,
 and threat model are in [CLAUDE.md](CLAUDE.md).
 
-## Status — Chapters 1 & 2 built; Ch1 ships, Ch2 awaits human sign-off
+## Status — Chapters 1 & 2 built and SHIP; Chapter 3 is next
 - `npm run check` (**0 errors, 0 warnings**) and `npm run build` pass. The old
   content-collection **deprecation warning is gone** (story moved out of `src/content/`).
 - **Chapter 1 "Arrival"** (arrival → reunite with family → buying a house), flag-gated to
@@ -17,9 +17,9 @@ and threat model are in [CLAUDE.md](CLAUDE.md).
 - **Chapter 2 "The Job"** (job → the plant → worksite ICE raid → detention → removal to a
   third country). Branches at the raid: **assert rights** vs. **comply out of fear** — both
   end in removal, with different preserved dignity / legal thread (consequence over score).
-  story-vet **2026-05-31 = NEEDS HUMAN REVIEW** (mandatory for the trauma beats;
-  grounding / Spanish / disclaimer all PASS). Sources: AIC, ILRC, NILC + 8 USC 1362,
-  SCOTUSblog, CFR.
+  story-vet 2026-05-31 = NEEDS HUMAN REVIEW; **human signed off 2026-06-01 = SHIP** (read
+  detainedA/B, courtA, removalA/B; Spanish lines confirmed kept as written). Sources: AIC,
+  ILRC, NILC + 8 USC 1362, SCOTUSblog, CFR.
 - Chapters now **chain**: an ending shows **"Continue to the next chapter →"** when the
   chapter sets the new optional `nextChapter` field on `Chapter` (Ch1 → Ch2).
 - **Read-aloud** via the Web Speech API, **on-device voices only** (cloud voices filtered —
@@ -31,10 +31,10 @@ and threat model are in [CLAUDE.md](CLAUDE.md).
   bilingual "voices are AI-generated" disclaimer is in the footer. **Chapter 1 regenerated
   with Kokoro** (37 clips, mp3 via `lameenc`, redistributable — license gate gone). Spanish is
   European/Castilian (`ef_dora`); cast→voice map in `scripts/generate-audio-kokoro.py`.
-  **Ch2 voices are now generated too** (41 clips, 2026-06-01) — done *provisionally*, before
-  the dignity sign-off, at the user's request. The manifest still marks `work` `ready:false`,
-  so a plain `npm run audio` skips it; regenerate with `npm run audio -- --only work` if the
-  prose changes. The **ICE agent now questions in Spanish** (`AGENT → em_alex`, shares Don
+  **Ch2 voices are generated** (41 clips, 2026-06-01). Originally provisional; the dignity
+  sign-off landed 2026-06-01 with the prose unchanged, so they are now the approved set and the
+  manifest marks `work` `ready:true`. Regenerate with `npm run audio -- --only work` only if
+  the prose changes. The **ICE agent now questions in Spanish** (`AGENT → em_alex`, shares Don
   Beto's voice — Kokoro's only es-male) and the raid-choice pronunciation models use Lucía's
   voice. `af_nicole` is rejected (user: "creepy"). Audition voices via `scripts/voice-lab.py`.
   **Ambient beds** are still the 8 ElevenLabs SFX in `public/audio/ambient/`
@@ -87,22 +87,17 @@ npm run dev      # serves http://localhost:4321
   is typed TS). Hand-rolled engine (no Ink). Astro CLI telemetry disabled.
 
 ## Open follow-ups (suggested order)
-1. **(human review — Chapter 2)** A human must read `src/story/chapter-02-work.ts` scenes
-   `detainedA` / `detainedB` / `courtA` / `removalA` / `removalB` (detention + removal) and
-   sign off — story-vet marks these **NEEDS HUMAN** by charter, not for quality. Also have a
-   native Spanish speaker confirm: `theRaid` "Contesto sus preguntas" (*sus* vs. *las*
-   register), `theCard` "No lo olvidaré", and the **ICE agent's new Spanish line** at `theRaid`
-   (`¿Dónde nació? ¿Está usted en el país legalmente?` — formal *usted*). Ch2 audio is already
-   generated *provisionally*, so regenerate after any prose edits. Then flip Ch2's `SOURCING
-   STATUS` comment to SHIP.
-2. **(big)** **Chapter 3** — next in the arc (toward ~10). Same discipline: source every
-   factual claim in `sources`, run story-vet, expect NEEDS HUMAN on any hardship beat. Wire
-   it up: set Ch2's `nextChapter: '<id>'` and register the chapter in `src/story/index.ts`.
-3. **(audio)** Voices generate locally via **Kokoro** (offline, Apache-2.0 → redistributable):
-   one-time setup, then `npm run audio -- --only arrival --force` (Ch1 already done).
-   For Ch2, after the dignity sign-off: `npm run audio -- --only work`. Setup + caveats
-   (European-accent Spanish) in `docs/audio/chapter-01-ai-voice-script.md`. Ambient beds are
-   still ElevenLabs SFX — optionally re-source as CC0 for a fully clean license.
+1. **(big) Chapter 3 — IN PROGRESS / next.** Next in the arc (toward ~10), continuing after
+   Ch2's third-country removal. Direction (2026-06-01 user): a new journey forward that
+   introduces new vocabulary while rehearsing already-learned words; POV still TBD (protagonist
+   abroad vs. María & family left in the US vs. both threads). Same discipline: source every
+   factual claim in `sources`, run story-vet, expect NEEDS HUMAN on any hardship beat. Wire it
+   up: set Ch2's `nextChapter: '<id>'` and register the chapter in `src/story/index.ts`.
+2. **(audio)** Voices generate locally via **Kokoro** (offline, Apache-2.0 → redistributable):
+   one-time setup, then `npm run audio -- --only arrival --force` (Ch1 done; Ch2 done too, 41
+   clips, now `ready:true`). Setup + caveats (European-accent Spanish) in
+   `docs/audio/chapter-01-ai-voice-script.md`. Ambient beds are still ElevenLabs SFX —
+   optionally re-source as CC0 for a fully clean license.
 4. **(audio polish)** Six Ch2 lines are single `lang:'mix'` clips (`morning-3`, `theCard-3/4`,
    `theRaid-0`, `detainedA-4`, `courtA-1`), so an embedded other-language word is synthesized
    through the wrong pipeline. Ch1 avoided this by splitting mixed lines into per-language
@@ -122,12 +117,18 @@ read-aloud; made the in-play learned-words tray tappable; added `scripts/voice-l
 (`af_nicole` rejected). **First real commit since the Ch1 slice** — all of the above is
 committed on `main` (local only, no remote).
 
+DONE 2026-06-01 (later): **Ch2 human dignity sign-off COMPLETE.** A human read and approved
+detainedA/B, courtA, removalA/B (detention + third-country removal) as restrained/dignity-
+first. Spanish kept as written — the agent's `usted` line, the choice "Contesto sus preguntas"
+(*sus*), and "No lo olvidaré" (neuter *lo*). Prose unchanged, so the provisional Ch2 audio
+stands and `work` was flipped to `ready:true`. **Ch2 SOURCING STATUS → SHIP.**
+
 ## Known gotchas
 - Node not on PATH (see "How to run").
 - Audio generation runs in a uv-managed **Python 3.12 venv** (`.venv-audio`, git-ignored)
   because PyTorch has no Python 3.14 wheels; `npm run audio` uses it. Setup in the audio doc.
-- **Chapter 2 = NEEDS HUMAN REVIEW** until a human signs off the detention/removal scenes
-  (follow-up #1). By design, not a defect — the prose vetted as restrained/dignity-first.
+- **Chapter 2 = SHIP** (human dignity sign-off complete 2026-06-01). The detention/removal
+  scenes were read and approved as restrained/dignity-first; the prose vetted as restrained.
 - `npm run check`/`build` print a Node `DEP0205 module.register` deprecation — it comes from
   Astro/Node internals, is unrelated to our code, and is harmless. (The old *content-
   collection* deprecation is gone now that the story lives in `src/story`.)

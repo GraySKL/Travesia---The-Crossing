@@ -25,7 +25,8 @@ export const beds = {
   plant:     { duration: 18, prompt: 'Inside a cold food-processing plant: steady industrial machine hum, conveyor rhythm, distant metallic clatter, fluorescent buzz, faint indistinct workers. Constant, mechanical, no music.' },
   raid:      { duration: 18, prompt: 'Tense interior moment: fluorescent buzz, machines winding down, distant muffled commotion and footfalls, a faint ringing tension. Restrained and uneasy, no shouting in clear words, no music.' },
   detention: { duration: 18, prompt: 'Cold institutional holding room: low fluorescent hum, a distant heavy door closing and echoing, faint indistinct murmur of many people, hard reflective surfaces. Bleak, sparse, no music.' },
-  tarmac:    { duration: 18, prompt: 'Pre-dawn airfield tarmac: steady wind, a distant jet engine idling, faint mechanical clanks, vast open emptiness. Cold, lonely, sparse, no music.' }
+  tarmac:    { duration: 18, prompt: 'Pre-dawn airfield tarmac: steady wind, a distant jet engine idling, faint mechanical clanks, vast open emptiness. Cold, lonely, sparse, no music.' },
+  center:    { duration: 18, prompt: 'Community meeting in a church basement: a small group settling into folding chairs, low warm overlapping voices (indistinct), a coffee urn humming, occasional chair scrape on tile. Calm, hopeful, human, no music.' }
 };
 
 // ---------------------------------------------------------------------------
@@ -86,10 +87,9 @@ export const chapters = [
   },
   {
     id: 'work',
-    // Chapter 2 depicts detention + removal and is awaiting human dignity sign-off.
-    // Wiring is in place; flip to true (or run `--only work`) to record its voices
-    // AFTER the prose is approved, so we don't generate voice for content that may change.
-    ready: false,
+    // Chapter 2 depicts detention + removal. Human dignity sign-off 2026-06-01;
+    // prose unchanged, so the provisional 41-clip voice set is now the approved set.
+    ready: true,
     clips: [
       // scene: morning
       { id: 'morning-0', voice: 'NARRATOR', lang: 'en', text: 'Months pass. Winter thins into spring. The borrowed couch is still yours, but you are no longer a stranger — the language that used to slide past you now lands, word by word.' },
@@ -143,6 +143,63 @@ export const chapters = [
       { id: 'removalB-0', voice: 'NARRATOR', lang: 'en', direction: 'still, restrained', text: 'It goes faster than you imagine. One pre-dawn there is a van, then a tarmac, then a plane. An officer reads a destination that is not your country — a third country, a place you have never been, that has agreed to take in people who are not its own.' },
       { id: 'removalB-1', voice: 'NARRATOR', lang: 'en', text: 'No one beyond these walls knows which plane, or where it lands. You hold your own name like the last thing left in your pockets.' },
       { id: 'removalB-2', voice: 'NARRATOR', lang: 'en', direction: 'reflection — absolving, then a charge to carry', text: 'Fear is not a failing — it is exactly what the system is built to use, and you were used at your most afraid. That is not your fault. But carry this now, for yourself and for anyone you can warn: you have the right to stay silent, the right to a lawyer, the right to sign nothing until one is beside you. Those words are not magic. They are dignity. Learn them. Say them. Hand them to the next person.' }
+    ]
+  },
+  {
+    id: 'stay',
+    // Chapter 3 "The Ones Who Stay" (María POV). Provisional voices generated
+    // 2026-06-01 at the user's request, BEFORE human sign-off (same as Ch2 was).
+    // Kept ready:false so a plain `npm run audio` skips it; regenerate after any
+    // prose/Spanish edit with `npm run audio -- --only stay --force`. New roles
+    // SOFIA (child) + ANA share ef_dora with María/Rosa (Kokoro's only es female).
+    ready: false,
+    clips: [
+      // scene: theChair
+      { id: 'theChair-0', voice: 'NARRATOR', lang: 'en', direction: 'quiet, steady; the weight of being the one who must hold things', text: "This time you are María. Not the new arrival on the borrowed couch — the one who has been here for years, the one with the keys, the one the family turns to. This morning the agents came to the plant. The couch is empty. Your cousin did not come home." },
+      { id: 'theChair-1', voice: 'NARRATOR', lang: 'en', text: "The little ones know something is wrong the way children always do — from the shape of the silence. At dinner there is a plate, and a chair, and no one in it. Sofía, the oldest, will not touch her food." },
+      { id: 'theChair-2', voice: 'SOFIA', lang: 'es', direction: 'a child, small and uncertain', text: "¿Dónde está tío?" },
+      { id: 'theChair-3', voice: 'NARRATOR', lang: 'en', text: "Five faces turn to you. Whatever you say now, they will keep for a long time. You can give them the truth, gently — or you can give them one more ordinary night before the world gets smaller." },
+      { id: 'theChair-c1', voice: 'MARIA', lang: 'es', text: "Les digo la verdad, con cuidado." },
+      { id: 'theChair-c2', voice: 'MARIA', lang: 'es', text: "Esta noche, los protejo del miedo." },
+      // scene: theSearch
+      { id: 'theSearch-0a', voice: 'NARRATOR', lang: 'en', text: "After they sleep, you begin. A legal-aid number a neighbor once pressed into your hand. A notebook. What you need first is a number — not a phone number but an A-number:" },
+      { id: 'theSearch-0b', voice: 'MARIA', lang: 'es', text: "un número de extranjero" },
+      { id: 'theSearch-0c', voice: 'NARRATOR', lang: 'en', text: "the digits the government stamps on a person and uses in place of their name." },
+      { id: 'theSearch-1', voice: 'NARRATOR', lang: 'en', text: "There is a public system for this — ICE's online detainee locator. You can search by full name and country of birth; with the A-number it is faster and surer. You don't have the number yet. You have a name, a country, and the whole night." },
+      { id: 'theSearch-2a', voice: 'NARRATOR', lang: 'en', text: "Sometimes the screen gives you nothing — the system has not caught up, or a person is moved before it does. When it does give you something, you write down a facility and a town you have never heard of. If it stays blank, there is a field office to call when the sun comes up." },
+      { id: 'theSearch-2b', voice: 'MARIA', lang: 'es', text: "No estás buscando sola." },
+      { id: 'theSearch-3', voice: 'NARRATOR', lang: 'en', text: "Maybe a lawyer already has the file. Maybe there is only you and a list of numbers to call. Either way, you have started — and starting, tonight, is the opposite of nothing." },
+      { id: 'theSearch-c1', voice: 'MARIA', lang: 'es', text: "Sigo buscando." },
+      // scene: elCentro
+      { id: 'elCentro-0', voice: 'NARRATOR', lang: 'en', text: "Rosa from two doors down finds you on the steps the next evening and does not ask if you are okay. She just says: come. She walks you to the basement of a church three blocks over, where folding chairs make a circle and the coffee is bad and free." },
+      { id: 'elCentro-1', voice: 'ROSA', lang: 'es', direction: 'warm, certain, no pity', text: "Aquí nadie está solo. Esto es apoyo mutuo." },
+      { id: 'elCentro-2', voice: 'NARRATOR', lang: 'en', text: "They are ordinary people — a retired teacher, a mechanic, two college kids with a clipboard. They keep a phone tree. They go with families to check-ins and to court so that no one has to walk in alone. They call it accompaniment." },
+      { id: 'elCentro-3a', voice: 'ANA', lang: 'es', text: "Te acompañamos." },
+      { id: 'elCentro-3b', voice: 'ANA', lang: 'en', text: "Not instead of you. With you." },
+      { id: 'elCentro-4', voice: 'NARRATOR', lang: 'en', text: "You came in carrying it alone. You leave with a phone tree, two names, and the strange warmth of a room full of strangers who decided your family is theirs." },
+      { id: 'elCentro-c1', voice: 'MARIA', lang: 'es', text: "No estamos solos. Estamos juntos." },
+      // scene: elPlan
+      { id: 'elPlan-0', voice: 'NARRATOR', lang: 'en', text: "What you cannot stop, you can prepare for. You will not be caught flat-footed again. At the kitchen table, with the children and Don Beto, you make a plan — the kind the people at the church have helped a hundred families write." },
+      { id: 'elPlan-1', voice: 'NARRATOR', lang: 'en', text: "You gather documents into one folder: birth certificates, passports, the children's medical cards, the names of their schools and teachers, and a list of every important phone number — because a memorized number survives a confiscated phone." },
+      { id: 'elPlan-2', voice: 'NARRATOR', lang: 'en', text: "You choose, out loud, who would care for the children if you were taken — a trusted adult, named now, not in a panic later. A lawyer can tell you the right paperwork where you live: a caregiver's authorization, or guardianship through a court. You do not guess at the law. You write down the question and who to ask." },
+      { id: 'elPlan-3a', voice: 'NARRATOR', lang: 'en', text: "You tape a red card to the refrigerator, beside the children's drawings." },
+      { id: 'elPlan-3b', voice: 'MARIA', lang: 'es', text: "Un plan de emergencia." },
+      { id: 'elPlan-4', voice: 'NARRATOR', lang: 'en', text: "Then you do the thing that matters most. You teach the children the words — the same words a woman named Lucía once taught your cousin on a break at the plant. You make it a game, so the fear stays small and the knowing stays large." },
+      { id: 'elPlan-5', voice: 'MARIA', lang: 'es', direction: 'gentle, like a lullaby with steel in it', text: "No abras la puerta sin una orden firmada por un juez." },
+      { id: 'elPlan-6', voice: 'MARIA', lang: 'es', text: "Tienes derecho a guardar silencio." },
+      { id: 'elPlan-7', voice: 'MARIA', lang: 'es', text: "No firmes nada. Pide un abogado." },
+      { id: 'elPlan-8', voice: 'SOFIA', lang: 'es', direction: 'a child reciting, solemn', text: "No abro la puerta. Pido un abogado." },
+      { id: 'elPlan-9', voice: 'NARRATOR', lang: 'en', text: "Sofía repeats it back, solemn as a prayer, and you have to turn toward the sink so she does not see your face. The words did not save your cousin. They will not, by themselves, save anyone. But a person who knows them is harder to disappear." },
+      { id: 'elPlan-c1', voice: 'MARIA', lang: 'es', text: "Me quedo cerca. Sostengo la casa." },
+      { id: 'elPlan-c2', voice: 'MARIA', lang: 'es', text: "Voy con los demás. Acompaño." },
+      // scene: endStay
+      { id: 'endStay-0', voice: 'NARRATOR', lang: 'en', direction: 'the feared call; restrained, not melodramatic', text: "Weeks later the call comes that you already feared: a courtroom, a final order, a plane to a country that is not even theirs. You sit the children down and tell them the truth, carefully, the way you decided you would. The chair at the table stays empty. You do not pretend otherwise." },
+      { id: 'endStay-1', voice: 'NARRATOR', lang: 'en', text: "But the house did not fall. There is a folder in the drawer and a red card on the fridge and a phone tree that answers on the second ring. The children know their rights better than you did at their age. Your cousin is on the other end of a bad phone line, far away — still a person, still yours — because you kept the line open." },
+      { id: 'endStay-2', voice: 'NARRATOR', lang: 'en', direction: 'reflection — quiet, resolute, not consoling falsely', text: "This is the part of the story that is on no card: the ones who stay. Removal takes a person from a place; it does not take them from their people — unless their people let it. You learned the words too late to save the morning they came, and just in time to make sure no one in this house ever meets that morning unprepared, or alone. That is what an ally is. Not a rescuer who arrives from outside. A neighbor who refuses to look away." },
+      // scene: endVoice
+      { id: 'endVoice-0', voice: 'NARRATOR', lang: 'en', text: "The order comes, and the plane, and the country that is not theirs — all the things you could not stop. You grieve. And then, on an ordinary Tuesday, you put on your coat and walk back to the church basement, and this time you are not the one being carried." },
+      { id: 'endVoice-1', voice: 'NARRATOR', lang: 'en', text: "You take the clipboard. You go with a family to a check-in so the mother does not walk in alone. You teach the words at the next meeting, in your cousin's accent, with your cousin's red card in your pocket. The fear did not leave. You just stopped letting it decide who you are." },
+      { id: 'endVoice-2', voice: 'NARRATOR', lang: 'en', direction: 'reflection — a charge to carry, steady and clear', text: "Removal is built to make an example — to make everyone left behind smaller and quieter. You did the opposite. You turned a kitchen-table plan into a phone tree, a phone tree into a room, a room into the simple, stubborn fact that no one on this block gets taken in silence anymore. That is what an ally can become: not a witness to the harm, but a multiplier of the words that blunt it. Learn them. Teach them. Walk in beside the person who is afraid." }
     ]
   }
 ];

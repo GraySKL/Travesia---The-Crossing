@@ -25,15 +25,18 @@ SR = 24000  # Kokoro output sample rate
 
 # Character role -> (Kokoro voice, default lang_code, speed).
 # Spanish is European/Castilian (Kokoro's only es voices); ef_dora is the sole
-# Spanish female, so María/Rosa/Lucía share it, nudged apart slightly by speed.
-# Spanish females run a touch slower (0.85–0.90) for learners.
+# Spanish female, so María/Rosa/Lucía/Ana/Sofía share it, nudged apart slightly by
+# speed. Spanish females run slower (0.82–0.88) for learners; the English narrator
+# is slowed to 0.90 too, so emotional beats have room to land (user note 2026-06-02).
 VOICES = {
-    "NARRATOR": ("af_heart", "a", 1.00),
-    "MARIA":    ("ef_dora", "e", 0.90),
-    "ROSA":     ("ef_dora", "e", 0.85),
-    "BETO":     ("em_alex", "e", 0.95),
-    "LUCIA":    ("ef_dora", "e", 0.90),
-    "AGENT":    ("em_alex", "e", 1.00),  # Spanish — agent questions workers in Spanish; shares em_alex w/ BETO (only es male voice), set apart by flat/procedural context
+    "NARRATOR": ("af_heart", "a", 0.90),  # slowed from 1.00 for emotional pacing
+    "MARIA":    ("ef_dora", "e", 0.85),
+    "ROSA":     ("ef_dora", "e", 0.82),
+    "BETO":     ("em_alex", "e", 0.90),
+    "LUCIA":    ("ef_dora", "e", 0.85),
+    "AGENT":    ("em_alex", "e", 0.95),  # Spanish — agent questions workers in Spanish; shares em_alex w/ BETO (only es male voice), set apart by flat/procedural context
+    "SOFIA":    ("ef_dora", "e", 0.88),  # Ch3 child (María's daughter); Kokoro has no es child voice, so ef_dora nudged a touch quicker to read younger
+    "ANA":      ("ef_dora", "e", 0.83),  # Ch3 mutual-aid volunteer; shares ef_dora, set near Rosa
 }
 LANG_OF = {"en": "a", "es": "e"}  # explicit per-clip language; "mix" uses role default
 

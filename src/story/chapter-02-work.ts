@@ -53,16 +53,21 @@ export const chapterWork: Chapter = {
   title: 'The Job',
   intro: 'You find work and begin to build a life — until the morning it is taken away.',
   startScene: 'morning',
-  // SOURCING STATUS (story-vet 2026-05-31): verdict NEEDS HUMAN REVIEW (mandatory
-  // for the detention/removal beats — NOT a quality concern). Checks: grounding
-  // PASS, tone NEEDS HUMAN, Spanish PASS, disclaimer PASS. Applied: courtA "signs"
-  // -> "enters" a removal order (term of art). DEFERRED to a native speaker: choice
-  // "Contesto sus preguntas" (sus vs las register) — kept as formal-to-authority;
-  // AND the agent's Spanish at theRaid-2 (formal "usted") — added 2026-06-01.
-  // 2026-06-01 EDITS (re-vet needed): ICE = "Three letters" (was "Four"); the ICE
-  // agent now questions in Spanish for immersion (theRaid-2; AGENT voice -> em_alex).
-  // HUMAN must read detainedA/detainedB/courtA/removalA/removalB and sign off.
-  // SOURCES human-verified 2026-05-31: all links open and quotes are accurately attributed.
+  // Both removal endings (removalA / removalB) chain into Chapter 3, where the POV
+  // shifts to María and the family left behind.
+  nextChapter: 'stay',
+  // SOURCING STATUS: SHIP. story-vet 2026-05-31 verdict was NEEDS HUMAN REVIEW
+  // (mandatory for the detention/removal beats — NOT a quality concern; grounding
+  // PASS, tone NEEDS HUMAN, Spanish PASS, disclaimer PASS). HUMAN SIGN-OFF 2026-06-01:
+  // a human read detainedA/detainedB/courtA/removalA/removalB and approved the
+  // detention + third-country-removal beats as restrained and dignity-first.
+  // Spanish confirmed, keep as written: the agent's theRaid-2 formal "usted" line;
+  // the choice "Contesto sus preguntas" (sus = formal-to-authority, deliberately not
+  // las); and "No lo olvidaré" (neuter lo, deliberately not la). Applied earlier:
+  // courtA "enters" (not "signs") a removal order (term of art). SOURCES human-
+  // verified 2026-05-31: all links open and quotes accurately attributed. Prose was
+  // UNCHANGED at sign-off, so the provisional 2026-06-01 audio (41 clips) stands —
+  // no regeneration needed.
   sources: [
     'ICE conducts worksite raids; worksite enforcement surged in 2025, mostly arresting workers — American Immigration Council: https://www.americanimmigrationcouncil.org/fact-sheet/understanding-ice-worksite-raids/ ("In the first seven months of the second Trump administration, ICE has publicly reported at least 40 worksite enforcement actions resulting in over 1,100 arrests.").',
     'Right to remain silent; no duty to answer questions about status/birthplace/entry — ILRC Know Your Rights one-pager (Aug 2025): https://www.ilrc.org/sites/default/files/2025-08/KYR-One-Page.pdf ("YOU HAVE THE RIGHT TO REMAIN SILENT. You do not have to answer questions about your immigration status, where you were born, or how you entered the country.").',
