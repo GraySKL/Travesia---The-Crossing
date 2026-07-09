@@ -34,3 +34,7 @@ Thumbs.db
 dev-dist/
 sw.js
 workbox-*.js
+
+# Nested sibling project (own repo) + stale worktree
+Puente la Divide/
+Puente-voice/
